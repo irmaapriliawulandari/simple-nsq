@@ -13,7 +13,7 @@ func main(){
 	config	:= nsq.NewConfig()
 	w, _ 	:= nsq.NewProducer("127.0.0.1:4150", config)
 
-	currentUserCount	:= 21
+	currentUserCount	:= 40
 	userId				:= currentUserCount
 	username			:= fmt.Sprintf("user%d", currentUserCount)
 	firstName			:= fmt.Sprintf("User %d", currentUserCount)

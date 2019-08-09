@@ -117,13 +117,10 @@ func createUser(usr *user.User) error {
 	fmt.Println("db connected!")
 
 	//insert data to db
-	sqlStatement := `INSERT into "users" (username, first_name, last_name)
-	VALUES ($1, $2, $3)
-	RETURNING user_id`
+	sqlStatement := `INSERT into "users" (user_id, username, first_name, last_name)
+	VALUES ($1, $2, $3, $4)`
 
-	UserId := 0
-	err = db.QueryRow(sqlStatement, usr.Username, usr.FirstName, usr.LastName).Scan(&UserId)
-	usr.UserId = UserId
+	_, err = db.Exec(sqlStatement, usr.UserId, usr.Username, usr.FirstName, usr.LastName)
 
 	return err
 }
@@ -168,16 +165,16 @@ func setUser(c redis.Conn, userId int, username, firstName, lastName string) err
 func getuser(c redis.Conn, lastUserId int) error {
 	for i := 1; i <= lastUserId; i++ {
 		key := fmt.Sprintf("user%d", i)
-
 		s, err := redis.String(c.Do("GET", key))
-
-		if err != nil {
+		if err == redis.ErrNil {
+			fmt.Printf("key %s not exist\n", key)
+		} else if err != nil {
 			return (err)
+		} else {
+			usr := user.User{}
+			err = json.Unmarshal([]byte(s), &usr)
+			fmt.Printf("get %s -> %v \n", key, usr)
 		}
-	
-		usr := user.User{}
-		err = json.Unmarshal([]byte(s), &usr)
-		fmt.Printf("get %s -> %v \n", key, usr)
 	}
 	
 	return nil
