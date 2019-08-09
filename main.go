@@ -6,14 +6,14 @@ import (
 
 	"github.com/nsqio/go-nsq"
 
-	"../nsq-pg-red/user"
+	"../simple-nsq/user"
 )
 
 func main(){
 	config	:= nsq.NewConfig()
 	w, _ 	:= nsq.NewProducer("127.0.0.1:4150", config)
 
-	currentUserCount	:= 10
+	currentUserCount	:= 21
 	userId				:= currentUserCount
 	username			:= fmt.Sprintf("user%d", currentUserCount)
 	firstName			:= fmt.Sprintf("User %d", currentUserCount)
